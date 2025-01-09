@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'css/proceed_to_payment.css' %}">
+    <script src="{% static 'js/cart.js' %}" defer></script>
+    <script src="{% static 'js/aichat.js' %}" defer></script> <!-- Added cart.js reference -->
+    <script>
+        /*function showPaymentFields(value) {
+            document.getElementById('card_details').style.display = value === 'debit_card' || value === 'credit_card' ? 'block' : 'none';
+            document.getElementById('cash_on_delivery_details').style.display = value === 'cash_on_delivery' ? 'block' : 'none';
+        }*/
+        function showPaymentFields(paymentMode) {
+        try {
+            const cardDetails = document.getElementById('card_details');
+            const cashOnDeliveryDetails = document.getElementById('cash_on_delivery_details');
+
+            // Hide all sections initially
+            cardDetails.style.display = 'none';
+            cashOnDeliveryDetails.style.display = 'none';
+
+            // Show relevant section based on payment mode
+            if (paymentMode === 'debit_card' || paymentMode === 'credit_card') {
+                cardDetails.style.display = 'block';
+            } else if (paymentMode === 'cash_on_delivery') {
+                cashOnDeliveryDetails.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error in showPaymentFields function:', error);
+        }
+    }
+    //testing extention function 
+    // Fetch phone extensions and populate the dropdown
+
+        /*function proceedToPayment() {
+            document.getElementById('cart-section').style.display = 'none';
+            document.getElementById('payment-section').style.display = 'block';
+
+            // Fetch and load the content from proceed_to_payment.html
+            fetch("{% url 'proceed_to_payment' %}")
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('payment-section').innerHTML = html;
+                })
+                .catch(error => console.error('Error loading payment section:', error));
+        }*/
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <button id="chat-button" aria-label="AI Chat Support">AI Chat Support</button>
+        <button onclick="window.location.href='/products/'" aria-label="Return to Product Listing">Return to Product Listing</button>
+        <!--<button id="proceed-to-payment" onclick="proceedToPayment()" aria-label="Proceed to Payment">Proceed to Payment</button>
+    -->
+        <button id="proceed-to-payment" data-url="{% url 'proceed_to_payment' %}" aria-label="Proceed to Payment">Proceed to Payment</button>
+    </header>
+    <main>
+        <div id="cart-section">
+            <div id="cart-list" class="cart-list">
+                {% for item in cart_details %}
+                <div class="cart-item">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="Image of {{ item.product.name }}" class="small-image"> <!-- Applied small-image class -->
+                    {% else %}
+                    <img src="{% static 'img/placeholder.png' %}" alt="Placeholder Image" class="small-image"> <!-- Applied small-image class -->
+                    {% endif %}
+                    <h2>{{ item.product.name }}</h2>
+                    <p>{{ item.product.description }}</p>
+                    <p>Price: ${{ item.product.price }}</p>
+                    <p>Quantity: <input type="number" value="{{ item.quantity }}" min="1" onchange="updateQuantity('{{ item.product.id }}', this.value)"></p>
+                    <p>Total: ${{ item.total_price }}</p>
+                    <button class="remove-from-cart" onclick="removeFromCart('{{ item.product.id }}')" aria-label="Remove {{ item.product.name }} from cart">Remove from Cart</button>
+                    <button class="add-to-wishlist" onclick="addToWishlist('{{ item.product.id }}')" aria-label="Add {{ item.product.name }} to Wishlist">Add to Wishlist</button>
+                </div>
+                {% endfor %}
+                {% if not cart_details %}
+                <p>Your cart is empty.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="payment-section" style="display: none;"></div> <!-- Payment section to load the content -->
+    </main>
+</body>
+</html>

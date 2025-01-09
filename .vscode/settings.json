@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "E:\\STUDY MATerial\\duttaEcommerceproject\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+      "E:\\STUDY MATerial\\duttaEcommerceproject",
+      "E:\\STUDY MATerial\\duttaEcommerceproject\\duttaEcommerceapp"
+    ]
+  }
+  

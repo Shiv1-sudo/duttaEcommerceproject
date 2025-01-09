@@ -1,0 +1,73 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Listing</title>
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <script src="{% static 'js/product.js' %}" defer></script>
+    <script src="{% static 'js/cart.js' %}" defer></script> <!-- Added cart.js reference -->
+    <script src="{% static 'js/aichat.js' %}" defer></script> <!-- Added cart.js reference -->
+</head>
+<body>
+    <header>
+        <h1>Product Listing</h1>
+        <button id="chat-button">AI Chat Support</button>
+        <input type="text" id="search-bar" placeholder="Search for products..." oninput="searchProducts()">
+        <button id="view-cart" onclick="viewCart()">View Cart</button> <!-- Added View Cart button -->
+    </header>
+    <nav>
+        <ul class="category-list">
+            {% for category in categories %}
+            <li class="category-item" onclick="toggleSubcategories('{{ category.id }}');">
+                {{ category.name }}
+                <ul class="subcategory-list" id="subcategory-{{ category.id }}" style="display:none;">
+                    {% for subcategory in category.subcategories.all %}
+                    <li class="subcategory-item" onclick="event.stopPropagation(); showProducts('{{ subcategory.id }}');">{{ subcategory.name }} ({{ subcategory.age_group }})</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <main>
+        <div id="product-list" class="product-list">
+            {% for product in products %}
+            <div class="product-item" data-subcategory-id="{{ product.subcategory.id }}">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="Product Image">
+                {% else %}
+                <img src="{% static 'img/placeholder.png' %}" alt="Placeholder Image">
+                {% endif %}
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.description }}</p>
+                <p>Price: ${{ product.price }}</p>
+                <button class="add-to-cart" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <!--<button class="ai-chat-support">AI Chat Support</button>-->
+                <div class="share-buttons">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank">Share on Facebook</a>
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}" target="_blank">Share on Twitter</a>
+                </div>
+            </div>
+            {% endfor %}
+            <p id="no-products" style="display: none;">We will list the product sooner.</p>
+        </div>
+    </main>
+    <!--<script>
+        function navigateToChat() {
+            console.log("Navigating to AI Chat Support");
+            window.location.href = '/aichat/';
+        }
+    </script>-->
+    <!--<script>
+        
+        function navigateToChat() {
+            window.location.href = '{%url "aichat" %}';
+            window.location.href = '{% url "aichat" %}';  Fixed template tag spac
+        }
+
+    </script>-->
+</body>
+</html>

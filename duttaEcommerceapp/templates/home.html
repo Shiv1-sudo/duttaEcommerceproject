@@ -1,0 +1,71 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <button id="signupButton">Sign Up</button>
+    <button id="loginButton">Login</button>
+
+    <script>
+        document.getElementById('signupButton').onclick = function() {
+            location.href = '{% url "signup" %}';
+        };
+        document.getElementById('loginButton').onclick = function() {
+            location.href = '{% url "login" %}';
+        };
+    </script>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <div class="button-container">
+        <button id="signupButton">Sign Up</button>
+        <button id="loginButton">Login</button>
+    </div>
+    <p class="intro-paragraph">
+        <em>At <strong>DuttaEcommerce</strong>, we offer a variety of exciting features to enhance your shopping experience:
+        <br><br>
+        <strong>Share to Social Media:</strong> Easily share your favorite products on platforms like Facebook and Twitter.<br>
+        <br>
+        <strong>Customized Solutions:</strong> Our application can be tailored to meet your unique requirements.<br>
+        <br>
+        <strong>Personalized Shopping:</strong> Enjoy personalized recommendations based on your past purchases<br> and browsing history.<br>
+        <br>
+        <strong>Seamless Payments:</strong> Experience secure and smooth transactions with multiple payment gateways.<br>
+        <br>
+        <strong>Top-Notch Security:</strong> Benefit from robust encryption and secure authentication to protect your data.<br>
+        <br>
+        <strong>Augmented Reality (AR) Shopping:</strong> Visualize products in real life with AR functionalities.<br>
+        <br>
+        <strong>Real-Time Updates:</strong> Stay informed with real-time updates on stock availability, price changes<br> and new products.<br>
+        <br>
+        <strong>Gamified Loyalty Rewards:</strong> Earn points and enjoy gamified elements like badges, levels and<br> challenges to make your shopping experience more engaging.<br>
+        <br><br>
+        Join us and elevate your ecommerce experience with features designed to make your life easier <br> and your business more successful!</em>
+    </p>
+    <script>
+        document.getElementById('signupButton').onclick = function() {
+            location.href = '{% url "signup" %}';
+        };
+        document.getElementById('loginButton').onclick = function() {
+            location.href = '{% url "login" %}';
+        };
+    </script>
+</body>
+</html>

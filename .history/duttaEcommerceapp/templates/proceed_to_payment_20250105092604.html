@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proceed to Payment</title>
+    <!--<script src="{% static 'js/aichat.js' %}" defer></script> --><!-- Added cart.js reference -->
+</head>
+<body>
+    <h1>Proceed to Payment</h1>
+    <form method="post" action="{% url 'proceed_to_payment' %}">
+        {% csrf_token %}
+        {{ form.mode_of_payment.label_tag }}
+        {{ form.mode_of_payment }}
+
+        <!-- Card Details Section -->
+        <div id="card_details" style="display: none;">
+            <h2>Card Details</h2>
+            {{ form.card_number.label_tag }}
+            {{ form.card_number }}
+            {{ form.card_expiry.label_tag }}
+            {{ form.card_expiry }}
+            {{ form.card_cvv.label_tag }}
+            {{ form.card_cvv }}
+        </div>
+
+        <!-- Cash on Delivery Details Section -->
+        <div id="cash_on_delivery_details" style="display: none;">
+            <h2>Delivery Address</h2>
+            {{ form.address.label_tag }}
+            {{ form.address }}
+            {{ form.postal_code.label_tag }}
+            {{ form.postal_code }}
+            {{ form.country.label_tag }}
+            {{ form.country }}
+            <label for="phone_extension">Phone Extension:</label>
+            <select id="phone_extension" name="phone_extension" class="form-control">
+                <option value="+1">+1 (Canada)</option>
+                <option value="+44">+44 (United Kingdom)</option>
+                <option value="+91">+91 (India)</option>
+                <option value="+86">+86 (China)</option>
+                <option value="+39">+39 (Italy)</option>
+                <option value="+44">+44 (United Kingdom)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+34">+34 (Spain)</option>
+                <option value="+52">+52 (Mexico)</option>
+                <option value="+33">+33 (France)</option>
+                <option value="+966">+966 (Saudi Arabia)</option>
+
+                <!-- Add more options here as needed -->
+            </select>
+            <label for="contact_number">Phone Number:</label>
+            <input type="text" id="contact_number" name="contact_number" class="form-control" pattern="[0-9]*" inputmode="numeric">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {{ form.landmark.label_tag }}
+            {{ form.landmark }}
+        </div>
+
+        <button type="submit">Submit Payment</button>
+    </form>
+
+    <script>
+        function showPaymentFields(paymentMode) {
+            const cardDetails = document.getElementById('card_details');
+            const cashOnDeliveryDetails = document.getElementById('cash_on_delivery_details');
+
+            // Hide all sections initially
+            cardDetails.style.display = 'none';
+            cashOnDeliveryDetails.style.display = 'none';
+
+            // Show relevant section based on payment mode
+            if (paymentMode === 'debit_card' || paymentMode === 'credit_card') {
+                cardDetails.style.display = 'block';
+            } else if (paymentMode === 'cash_on_delivery') {
+                cashOnDeliveryDetails.style.display = 'block';
+            }
+        }
+
+        window.showPaymentFields = showPaymentFields;
+
+        // Fetch phone extensions and populate the dropdown (for dynamic population)
+        document.addEventListener("DOMContentLoaded", function() {
+            const phoneExtensionSelect = document.getElementById('phone_extension');
+            if (phoneExtensionSelect) {
+                fetch('https://restcountries.com/v3.1/all')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(country => {
+                            if (country.idd && country.idd.root && country.idd.suffixes) {
+                                country.idd.suffixes.forEach(suffix => {
+                                    const option = document.createElement('option');
+                                    option.value = `${country.idd.root}${suffix}`;
+                                    option.textContent = `${country.idd.root}${suffix} (${country.name.common})`;
+                                    phoneExtensionSelect.appendChild(option);
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error fetching phone extensions:', error));
+            }
+        });
+
+        console.log('DOM fully loaded and parsed');
+        console.log('showPaymentFields function loaded:', typeof window.showPaymentFields === 'function');
+    </script>
+</body>
+</html>

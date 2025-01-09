@@ -1,0 +1,77 @@
+
+<!--{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="send_otp">Send OTP</button>
+    </form>
+
+      
+    {% if otp_sent|default:False %}
+        <form method="post">
+            {% csrf_token %}
+            {{ otp_form.as_p }}
+            <button type="submit" name="verify_otp">Verify OTP</button>
+        </form>
+        <p>{{ otp_message }}</p>
+    {% endif %}
+
+    
+    {% if form.errors %}
+        <p>{{ form.errors }}</p>
+    {% endif %}
+
+    {% if otp_form.errors %}
+        <p>{{ otp_form.errors }}</p>
+    {% endif %}
+</body>
+</html>
+-->
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/otp.js' %}" defer></script>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post" id="login-form" data-otp-sent="{{ otp_sent|default:False|yesno:'true,false' }}">
+        {% csrf_token %}
+        <label for="email-field">Email:</label>
+        <input type="email" id="email-field" name="email" value="{{ form.email.value }}" required>
+        <label for="password-field">Password:</label>
+        <input type="password" id="password-field" name="password" required>
+        <button type="submit" id="send-otp-button" name="send_otp">Send OTP</button>
+    </form>
+
+    <div id="otp-section" style="display: none;">
+        <form method="post">
+            {% csrf_token %}
+            <label for="otp-field">OTP:</label>
+            {{ otp_form.otp }}
+            <button type="submit" id="verify-otp-button" name="verify_otp">Verify OTP</button>
+        </form>
+        <p>{{ otp_message }}</p>
+    </div>
+
+    {% if form.errors %}
+        <p>{{ form.errors }}</p>
+    {% endif %}
+
+    {% if otp_form.errors %}
+        <p>{{ otp_form.errors }}</p>
+    {% endif %}
+</body>
+</html>

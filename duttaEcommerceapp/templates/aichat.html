@@ -1,0 +1,93 @@
+<!--{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chat Support</title>
+    <link rel="stylesheet" href="{% static 'css/aichat.css' %}">
+</head>
+<body>
+    <h1>AI Chat Support</h1>
+    <div id="chat-container">
+        <div id="chat-box">
+            <p><strong>AI:</strong> Hello, how may I assist you?</p>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+        <div class="navigation-buttons">
+            <button onclick="window.location.href='/'">Home</button>
+            <button onclick="window.location.href='/products/'">Product Listing</button>
+        </div>
+    </div>
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('user-input');
+            var message = input.value.trim();
+            if (message !== '') {
+                var chatBox = document.getElementById('chat-box');
+                chatBox.innerHTML += '<p><strong>You:</strong> ' + message + '</p>';
+                input.value = '';
+
+                setTimeout(function() {
+                    chatBox.innerHTML += '<p><strong>AI:</strong> For immediate support assistance, please reach out to <a href="mailto:duttashivani06@gmail.com">duttashivani06@gmail.com</a>.</p>';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
+-->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chat Support</title>
+    <link rel="stylesheet" href="{% static 'css/aichat.css' %}">
+</head>
+<body>
+    <header>
+        <h1>AI Chat Support</h1>
+        <div class="navigation-buttons">
+            <!--<button onclick="window.location.href='/'">Home</button>-->
+            <button onclick="window.location.href='/products/'">Return to Product Page</button>
+        </div>
+    </header>
+    <div id="chat-container">
+        <div id="chat-box">
+            <p><strong>AI:</strong> Hello, how may I assist you?</p>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('user-input');
+            var message = input.value.trim();
+            if (message !== '') {
+                var chatBox = document.getElementById('chat-box');
+                chatBox.innerHTML += '<p><strong>You:</strong> ' + message + '</p>';
+                input.value = '';
+
+                setTimeout(function() {
+                    chatBox.innerHTML += '<p><strong>AI:</strong> For immediate support assistance, please reach out to <a href="mailto:duttashivani06@gmail.com">duttashivani06@gmail.com</a>.</p>';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

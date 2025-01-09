@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <script src="{% static 'js/cart.js' %}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <button id="chat-button" aria-label="AI Chat Support">AI Chat Support</button>
+        <button onclick="window.location.href='/products/'" aria-label="Return to Product Listing">Return to Product Listing</button> <!-- Updated URL -->
+        <button id="proceed-to-payment" onclick="proceedToPayment()" aria-label="Proceed to Payment">Proceed to Payment</button>
+    </header>
+    <main>
+        <div id="cart-list" class="cart-list">
+            {% for item in cart_details %}
+            <div class="cart-item">
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="Image of {{ item.product.name }}" class="small-image"> <!-- Applied small-image class -->
+                {% else %}
+                <img src="{% static 'img/placeholder.png' %}" alt="Placeholder Image" class="small-image"> <!-- Applied small-image class -->
+                {% endif %}
+                <h2>{{ item.product.name }}</h2>
+                <p>{{ item.product.description }}</p>
+                <p>Price: ${{ item.product.price }}</p>
+                <p>Quantity: <input type="number" value="{{ item.quantity }}" min="1" onchange="updateQuantity('{{ item.product.id }}', this.value)"></p>
+                <p>Total: ${{ item.total_price }}</p>
+                <button class="remove-from-cart" onclick="removeFromCart('{{ item.product.id }}')" aria-label="Remove {{ item.product.name }} from cart">Remove from Cart</button>
+                <button class="add-to-wishlist" onclick="addToWishlist('{{ item.product.id }}')" aria-label="Add {{ item.product.name }} to Wishlist">Add to Wishlist</button>
+            </div>
+            {% endfor %}
+            {% if not cart_details %}
+            <p>Your cart is empty.</p>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>
