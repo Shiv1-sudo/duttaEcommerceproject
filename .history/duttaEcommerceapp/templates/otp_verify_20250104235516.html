@@ -1,0 +1,27 @@
+    {% load static %}
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Verify OTP</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <!--<script src="{% static 'js/otp.js' %}" defer></script>-->
+    </head>
+    <body>
+        <h1>Verify OTP</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ otp_form.as_p }}
+            <button type="submit" name="verify_otp">Verify OTP</button>
+        </form>
+
+        {% if otp_message %}
+            <p>{{ otp_message }}</p>
+        {% endif %}
+
+        {% if otp_form.errors %}
+            <p>{{ otp_form.errors }}</p>
+        {% endif %}
+    </body>
+    </html>
