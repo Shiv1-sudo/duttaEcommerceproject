@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuttaTechEcommSphere</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>DuttaTechEcommSphere: Pioneering the Future of eCommerce Through Technological Synergy</h1>
+        </div>
+        <div class="header-right">
+            <button id="signupButton">Sign Up</button>
+            <button id="loginButton">Login</button>
+        </div>
+    </header>
+    <main>
+        <table class="intro-table">
+            <tr>
+                <td>
+                    <p class="intro-paragraph">
+                        <em>At <strong>DuttaEcommerce</strong>, we're pioneering the future of eCommerce by integrating a tech community. This visionary move aligns with the interconnected digital ecosystems of tomorrow. By leveraging the strengths of both eCommerce and technology, we create a unique, value-driven experience that promotes growth, engagement, and innovation. Our initiative not only addresses the needs of the tech community but also opens up new avenues for business and career development, making it a win-win for all involved.
+                        <br><br>
+                        Discover our exciting features designed to enhance your experience:
+                        <br><br>
+                        <strong>Tech Community Integration:</strong> Join a vibrant tech community within our eCommerce platform.<br>
+                        <br>
+                        <strong>Gamified Professional Challenges:</strong> Professionals can answer questions and see results after locking all answers.<br>
+                        <br>
+                        <strong>Job Seekers' Platform:</strong> Share your story, challenges, and achievements. AI provides solutions with NLP, and others can comment on each solution.<br>
+                        <br>
+                        <strong>Dashboard:</strong> Clients can view real-time enhancements with data and provide feedback.<br>
+                        <br>
+                        <strong>Share to Social Media:</strong> Easily share your favorite products on platforms like Facebook and Twitter.<br>
+                        <br>
+                        <strong>Customized Solutions:</strong> Tailor our application to meet your unique requirements.<br>
+                        <br>
+                        <strong>Personalized Shopping:</strong> Enjoy personalized recommendations based on your past purchases and browsing history.<br>
+                        <br>
+                        <strong>Seamless Payments:</strong> Experience secure and smooth transactions with multiple payment gateways.<br>
+                        <br>
+                        <strong>Top-Notch Security:</strong> Benefit from robust encryption and secure authentication to protect your data.<br>
+                        <br>
+                        <strong>Augmented Reality (AR) Shopping:</strong> Visualize products in real life with AR functionalities.<br>
+                        <br>
+                        <strong>Real-Time Updates:</strong> Stay informed with real-time updates on stock availability, price changes, and new products.<br>
+                        <br>
+                        <strong>Gamified Loyalty Rewards:</strong> Earn points and enjoy gamified elements like badges, levels, and challenges to make your shopping experience more engaging.<br>
+                        <br><br>
+                        Join us and elevate your eCommerce experience with features designed to make your life easier and your business more successful!</em>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </main>
+    <footer>
+        <a href="https://www.youtube.com" target="_blank">Our YouTube Channel</a>
+    </footer>
+    <script>
+        document.getElementById('signupButton').onclick = function() {
+            location.href = '{% url "signup" %}';
+        };
+        document.getElementById('loginButton').onclick = function() {
+            location.href = '{% url "login" %}';
+        };
+    </script>
+</body>
+</html>

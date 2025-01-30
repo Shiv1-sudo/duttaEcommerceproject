@@ -1,0 +1,36 @@
+<!-- job_seekers.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Seekers</title>
+    <link rel="stylesheet" href="{% static 'css/job_seekers.css' %}">
+    <script src="{% static 'js/job_seekers.js' %}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Tech Connect Dashboard</h1>
+        <button id="tech-connect-dashboard">Tech Connect Dashboard</button>
+    </header>
+    <main>
+        <h2>Share Your Story</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Stories, Challenges, and Achievements</h2>
+        <div id="forum">
+            {% for job_seeker_user in job_seeker_user %}
+                <div class="user-post">
+                    <h3>{{ job_seeker_user.user.name }}</h3>
+                    <p><strong>Story:</strong> {{ job_seeker_user.story }}</p>
+                    <p><strong>Challenges:</strong> {{ job_seeker_user.challenges }}</p>
+                    <p><strong>Achievements:</strong> {{ job_seeker_user.achievements }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

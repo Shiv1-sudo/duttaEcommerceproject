@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Services</title>
+    <link rel="stylesheet" href="{% static 'css/Tech_services.css' %}">
+</head>
+<body>
+    <button id="tech-connect-homepage">TechConnect Homepage</button>
+    <h1>Tech Services</h1>
+    <h2>Free Tech Services</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in free_services %}
+            <tr>
+                <td>{{ service.name }}</td>
+                <td>{{ service.description }}</td>
+                <td>{{ service.price }}</td>
+                <td><a href="{{ service.link }}" target="_blank">Visit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Paid Tech Services</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in paid_services %}
+            <tr>
+                <td>{{ service.name }}</td>
+                <td>{{ service.description }}</td>
+                <td>{{ service.price }}</td>
+                <td><a href="{{ service.link }}" target="_blank">Visit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Event listener for Tech Connect Homepage button
+                document.getElementById('tech-connect-homepage').addEventListener('click', function() {
+                    window.location.href = '/tech_connect/';
+                });
+            } catch (error) {
+                console.error("Error adding event listener:", error);
+            }
+        });
+    </script>
+</body>
+</html>

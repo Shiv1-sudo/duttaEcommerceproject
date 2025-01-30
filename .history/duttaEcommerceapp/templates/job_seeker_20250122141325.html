@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Seekers</title>
+    <link rel="stylesheet" href="{% static 'css/job_seekers.css' %}">
+    <script src="{% static 'js/job_seekers.js' %}" defer></script>
+    <script src="{% static 'js/techconnect.js' %}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for AJAX -->
+</head>
+<body>
+    <header>
+        <!--<h1>Tech Connect Dashboard</h1>-->
+        <button id="dashboard-connect">View Dashboard</button>
+        <button id="tech-connect-homepage">View Dashboard</button>
+        <h1>Illuminate your path with automated responses and catalyze your growth</h1>
+    </header>
+    <main>
+        <!--<h2>Share Your Story</h2>-->
+        <form id="jobSeekerForm" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div> <!-- Container for the response -->
+        <h2>Conversation History available! Share your comments.</h2>
+        <div id="forum">
+            {% for job_seeker_user in job_seeker_users %}
+                <div class="user-post">
+                    <!--<p><strong>Story:</strong> {{ job_seeker_user.story }}</p>-->
+                    <p><strong>Challenges:</strong> {{ job_seeker_user.challenges }}</p>
+                    <!--<p><strong>Achievements:</strong> {{ job_seeker_user.achievements }}</p>-->
+                    <p><strong>Relax:</strong> {{ job_seeker_user.relax }}</p> <!-- New field for AI-driven solution -->
+                    <p><strong>Posted on:</strong> {{ job_seeker_user.created_at }}</p>
+                    <button onclick="showCommentForm('{{ job_seeker_user.id }}')">Comment</button>
+                    <div id="comment-form-{{ job_seeker_user.id }}" class="comment-form" style="display:none;">
+                        <form method="POST" action="{% url 'submit_comment' job_seeker_user.id %}">
+                            {% csrf_token %}
+                            <textarea name="comment_text" placeholder="Add a comment..." maxlength="200" required></textarea>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="comments" id="comments-{{ job_seeker_user.id }}">
+                        <!-- Load comments in descending order of created_at -->
+                        {% for comment in job_seeker_user.comments.all|dictsortreversed:"created_at" %}
+                            <p>{{ comment.comment_text }}</p>
+                            <p><small>Commented on: {{ comment.created_at }}</small></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+    <script>
+        function showCommentForm(userId) {
+            try {
+                document.getElementById('comment-form-' + userId).style.display = 'block';
+            } catch (error) {
+                console.error("Error showing comment form:", error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {// Event listener for Dashboard button
+                document.getElementById('dashboard-connect').addEventListener('click', function() {
+                    window.location.href = '/dashboard/';
+                });
+                // Event listener for Tech Connect Homepage button
+                document.getElementById('tech-connect-homepage').addEventListener('click', function() {
+                    window.location.href = '/tech_connect/';
+                });
+            } catch (error) {
+                console.error("Error adding event listener:", error);
+            }
+
+            // AJAX for form submission
+          $('#jobSeekerForm').on('submit', function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "job_seekers" %}',  // Ensure this URL matches the view handling the form submission
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#response').html(`
+                            
+                            <p><strong>Challenges:</strong> ${response.challenges}</p>
+                            
+                            <p><strong>Relax:</strong> ${response.relax}</p>
+                            <p><strong>Posted on:</strong> ${response.created_at}</p>
+                        `); // Display response <p><strong>Story:</strong> ${response.story}</p><p><strong>Achievements:</strong> ${response.achievements}</p>
+                        $('#jobSeekerForm')[0].reset(); // Reset the form
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error: ' + status + error);
+                    }
+                });
+            });
+/*            // AJAX for form submission
+            $('#jobSeekerForm').on('submit', function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "job_seekers" %}',  // Ensure this URL matches the view handling the form submission
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        let responseHTML = `<p><strong>Posted on:</strong> ${response.created_at}</p>`;
+
+                        if (response.challenges && response.challenges.length > 0 && response.story && response.achievements) {
+                           // All fields are filled
+                           responseHTML += `<p><strong>Challenges:</strong> ${response.challenges.join(', ')}</p>`;
+                           responseHTML += `<p><strong>Relax:</strong> ${response.relax}</p>`;
+                        } else {
+                              // Missing one or more mandatory fields
+                              responseHTML += `<p>Fill up and select the asked queries so that we can assist better.</p>`;
+                        }
+
+                        $('#response').html(responseHTML); // Display response
+                        $('#jobSeekerForm')[0].reset(); // Reset the form
+                    },
+                    error: function(xhr, status, error) {
+                         console.error('AJAX Error: ' + status + error);
+                    }
+                });
+            }); */           
+
+        });
+    </script>
+</body>
+</html>

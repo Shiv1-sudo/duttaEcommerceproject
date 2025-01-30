@@ -1,0 +1,35 @@
+<!-- job_seekers.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Seekers</title>
+    <link rel="stylesheet" href="{% static 'css/job_seekers.css' %}">
+    <script src="{% static 'js/job_seekers.js' %}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Job Seekers</h1>
+        <button id="job-seeker-button">Job Seekers</button>
+    </header>
+    <main>
+        <h2>Share Your Story</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Stories, Challenges, and Achievements</h2>
+        <div id="forum">
+            {% for user in users %}
+                <div class="user-post">
+                    <h3>{{ user.name }}</h3>
+                    <p><strong>Story:</strong> {{ user.story }}</p>
+                    <p><strong>Challenges:</strong> {{ user.challenges }}</p>
+                    <p><strong>Achievements:</strong> {{ user.achievements }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

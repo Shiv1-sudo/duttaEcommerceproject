@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+           
+    <button id="product-listing" class="nav-button" onclick="window.location.href='/products/'"> Return to duttaEcommerce page</button>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Connect</title>
+    <link rel="stylesheet" href="{% static 'css/techpage.css' %}">
+    <script src="{% static 'js/job_seekers.js' %}" defer></script>
+</head>
+<body>
+   <!-- <header>
+        
+        <button id="product-listing" class="nav-button" onclick="window.location.href='/products/'"> Return to duttaEcommerce page</button>
+    </header>-->
+    <h1>Tech Community homepage</h1>
+    <div class="button-container">
+        <button onclick="window.location.href='/job_seekers/'">Job Seekers</button>
+        <button onclick="window.location.href='/professionals/'">Professionals</button>
+        <button onclick="window.location.href='/tech_services/'">Tech services</button>
+    </div>
+</body>
+</html>
