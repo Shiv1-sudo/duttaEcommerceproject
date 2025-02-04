@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - updated-project
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
@@ -23,15 +28,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run migrations
-        run: python manage.py migrate
-
       - name: Set Environment Variables
         run: |
-          echo "PYTHONPATH=${{ secrets.PYTHONPATH }}" >> $GITHUB_ENV
+          echo "PYTHONPATH=/home/username/public_html" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }}" >> $GITHUB_ENV
           echo "DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}" >> $GITHUB_ENV
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> $GITHUB_ENV
+          echo "DATABASE_NAME=/home/username/public_html/db.sqlite3" >> $GITHUB_ENV
           echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
           echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
@@ -46,6 +48,12 @@ jobs:
           echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> $GITHUB_ENV
           echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Run migrations
+        run: python manage.py migrate
+
+      - name: Collect Static Files
+        run: python manage.py collectstatic --noinput
+
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
         with:
@@ -53,9 +61,10 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd public_html/myproject
+            cd /home/username/public_html
             git pull origin updated-project
             source venv/bin/activate
             pip install -r requirements.txt
             python manage.py collectstatic --noinput
+            python manage.py migrate
             sudo systemctl restart httpd
