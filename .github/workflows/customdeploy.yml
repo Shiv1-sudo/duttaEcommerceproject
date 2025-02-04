@@ -30,10 +30,10 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          echo "PYTHONPATH=/home/username/public_html" >> $GITHUB_ENV
+          echo "PYTHONPATH=/home/duttvnyn/public_html" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }}" >> $GITHUB_ENV
           echo "DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}" >> $GITHUB_ENV
-          echo "DATABASE_NAME=/home/username/public_html/db.sqlite3" >> $GITHUB_ENV
+          echo "DATABASE_NAME=/home/duttvnyn/public_html/db.sqlite3" >> $GITHUB_ENV
           echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
           echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
