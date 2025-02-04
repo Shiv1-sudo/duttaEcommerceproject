@@ -44,9 +44,9 @@ jobs:
             static/css
             static/js
             static/images
-            duttaEcommerceproject/
-            duttaEcommerceproject.git/
-            venv/
+            duttaEcommerceproject
+            duttaEcommerceproject.git
+            venv
           
       - name: Deploy to GitHub Pages
         id: deployment
