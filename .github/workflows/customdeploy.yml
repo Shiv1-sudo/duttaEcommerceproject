@@ -18,13 +18,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff5
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Create virtual environment
+        run: python -m venv venv
+
+      - name: Activate virtual environment and install dependencies
         run: |
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -49,10 +58,14 @@ jobs:
           echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Run migrations
-        run: python manage.py migrate
+        run: |
+          source venv/bin/activate
+          python manage.py migrate
 
       - name: Collect Static Files
-        run: python manage.py collectstatic --noinput
+        run: |
+          source venv/bin/activate
+          python manage.py collectstatic --noinput
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
