@@ -2,7 +2,7 @@ Django==3.2.5  # Replace with the version you're using
 djangorestframework==3.12.4  # If using DRF
 gunicorn==20.1.0  # For serving the app
 psycopg2-binary==2.9.1  # If using PostgreSQL
-Pillow==8.2.0  # For image processing
+#Pillow==8.2.0  # For image processing
 django-environ==0.4.5  # For managing environment variables
 django-cors-headers==3.7.0  # For handling CORS
 django-extensions==3.1.3  # For additional Django extensions
