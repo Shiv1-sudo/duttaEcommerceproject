@@ -80,13 +80,13 @@ jobs:
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
 
-      - name: Apply Migrations and Log Output
+      - name: Reset Migrations and Apply
         run: |
           source venv/bin/activate
-          python manage.py makemigrations --noinput
-          python manage.py migrate --noinput
+          python manage.py migrate duttaEcommerceapp zero
+          python manage.py makemigrations
+          python manage.py migrate
           python manage.py showmigrations
-          python manage.py showmigrations duttaEcommerceapp
           python manage.py migrate --plan
 
       - name: Run Custom Management Command
