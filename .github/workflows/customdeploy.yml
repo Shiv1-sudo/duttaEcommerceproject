@@ -44,10 +44,10 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          echo "PYTHONPATH=/home/duttvnyn/public_html" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}/public_html" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=duttaEcommerceproject.settings" >> $GITHUB_ENV
           echo "DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}" >> $GITHUB_ENV
-          echo "DATABASE_NAME=/home/duttvnyn/public_html/db.sqlite3" >> $GITHUB_ENV
+          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db.sqlite3" >> $GITHUB_ENV
           echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
           echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
@@ -64,8 +64,8 @@ jobs:
 
       - name: Create Database Directory
         run: |
-          mkdir -p /home/duttvnyn/public_html
-          chmod -R 755 /home/duttvnyn/public_html
+          mkdir -p ${{ github.workspace }}/public_html
+          chmod -R 755 ${{ github.workspace }}/public_html
 
       - name: Run migrations
         run: |
@@ -84,7 +84,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/duttvnyn/public_html
+            cd ${{ github.workspace }}/public_html
             git pull origin updated-project
             source venv/bin/activate
             pip install -r requirements.txt
