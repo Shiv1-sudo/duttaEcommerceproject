@@ -19,8 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+'''# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=True, cast=bool)'''
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'duttaEcommerceapp',
     'django_extensions',  # Add this line if you are using django_extensions
     'django_countries',
-
+    
 ]
 
 AUTH_USER_MODEL = 'duttaEcommerceapp.User'
@@ -86,17 +86,15 @@ WSGI_APPLICATION = 'duttaEcommerceproject.wsgi.application'
 # Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': config('DATABASE_ENGINE'),
-        'NAME': config('DATABASE_NAME'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'public_html/db.sqlite3',
         'USER': config('DATABASE_USER'),
         'PASSWORD': config('DATABASE_PASSWORD'),
         'HOST': config('DATABASE_HOST'),
         'PORT': config('DATABASE_PORT'),
     }
-     
-        #'default': dj_database_url.config(default=config('DATABASE_URL'))
- 
 
+      #  'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 # Email Configuration
@@ -161,7 +159,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Uncomment if you need to collect static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Media files settings
 MEDIA_URL = '/media/'
@@ -203,5 +201,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Reset game data on server start
 django.setup()
 call_command('reset_game_data')
+
 
 
