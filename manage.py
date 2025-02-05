@@ -28,7 +28,7 @@ def migration_exists(migration_name, app_name):
     
 
 def main():
-    Run administrative tasks.
+    '''Run administrative tasks.'''
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings')
     '''os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings.prod')'''
     
