@@ -21,7 +21,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7 libtiff6
+          sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -31,10 +31,15 @@ jobs:
       - name: Create virtual environment
         run: python -m venv venv
 
-      - name: Activate virtual environment and install dependencies
+      - name: Activate virtual environment and install distutils
         run: |
           source venv/bin/activate
           python -m pip install --upgrade pip
+          sudo apt-get install -y python3-distutils
+
+      - name: Install project dependencies
+        run: |
+          source venv/bin/activate
           pip install -r requirements.txt
 
       - name: Set Environment Variables
