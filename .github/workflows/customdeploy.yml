@@ -74,6 +74,7 @@ jobs:
           python manage.py migrate --noinput
           python manage.py showmigrations
           python manage.py showmigrations duttaEcommerceapp
+          python manage.py migrate --list
 
       - name: Run Custom Management Command
         run: |
