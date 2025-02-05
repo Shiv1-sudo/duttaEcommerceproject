@@ -26,7 +26,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'  # Use a compatible Python version
+          python-version: '3.8'
 
       - name: Create virtual environment
         run: python -m venv venv
@@ -69,6 +69,7 @@ jobs:
 
       - name: Verify Database Path and Permissions
         run: |
+          echo "Database path: ${{ github.workspace }}/public_html/db.sqlite3"
           ls -l ${{ github.workspace }}/public_html/
           touch ${{ github.workspace }}/public_html/db.sqlite3
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
