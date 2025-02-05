@@ -67,11 +67,13 @@ jobs:
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
 
-      - name: Apply Migrations
+      - name: Apply Migrations and Log Status
         run: |
           source venv/bin/activate
-          python manage.py makemigrations
-          python manage.py migrate
+          python manage.py makemigrations --noinput
+          python manage.py migrate --noinput
+          python manage.py showmigrations
+          python manage.py showmigrations duttaEcommerceapp
 
       - name: Run Custom Management Command
         run: |
