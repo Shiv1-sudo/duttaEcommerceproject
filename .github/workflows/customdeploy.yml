@@ -67,20 +67,20 @@ jobs:
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
 
-      - name: Run migrations
+      - name: Run Migrations
         run: |
           source venv/bin/activate
           python manage.py migrate
-
-      - name: Collect Static Files
-        run: |
-          source venv/bin/activate
-          python manage.py collectstatic --noinput
 
       - name: Run Custom Management Command
         run: |
           source venv/bin/activate
           python manage.py reset_game_data
+
+      - name: Collect Static Files
+        run: |
+          source venv/bin/activate
+          python manage.py collectstatic --noinput
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
