@@ -28,9 +28,9 @@ def migration_exists(migration_name, app_name):
     
 
 def main():
-    """Run administrative tasks."""
-    '''os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings')'''
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings.prod')
+    Run administrative tasks.
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings')
+    '''os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'duttaEcommerceproject.settings.prod')'''
     
     if not check_virtualenv():
         print("Virtual environment is not activated. Please activate it and try again.")
