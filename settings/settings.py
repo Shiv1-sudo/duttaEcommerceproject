@@ -199,8 +199,8 @@ MANAGERS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Reset game data on server start
-django.setup()
-call_command('reset_game_data')
+#django.setup()
+#call_command('reset_game_data')
 
 
 
