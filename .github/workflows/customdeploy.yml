@@ -67,9 +67,10 @@ jobs:
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
 
-      - name: Run Migrations
+      - name: Apply Migrations
         run: |
           source venv/bin/activate
+          python manage.py makemigrations
           python manage.py migrate
 
       - name: Run Custom Management Command
