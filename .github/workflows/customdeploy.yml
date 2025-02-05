@@ -91,6 +91,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}  # Ensure this secret is correctly set
           username: ${{ secrets.SERVER_USERNAME }}  # Ensure this secret is correctly set
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret is correctly set
+          port: 21098  # Ensure the correct SSH port is specified
           script: |
             cd ${{ github.workspace }}/public_html
             git pull origin updated-project
