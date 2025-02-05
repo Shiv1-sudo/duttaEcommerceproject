@@ -80,11 +80,6 @@ jobs:
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
 
-      - name: Run Custom Management Command
-        run: |
-          source venv/bin/activate
-          python manage.py reset_game_data
-
       - name: Collect Static Files
         run: |
           source venv/bin/activate
