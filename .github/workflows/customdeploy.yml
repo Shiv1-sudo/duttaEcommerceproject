@@ -67,7 +67,19 @@ jobs:
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
 
-      - name: Apply Migrations and Log Status
+      - name: Verify Database Path and Permissions
+        run: |
+          ls -l ${{ github.workspace }}/public_html/
+          touch ${{ github.workspace }}/public_html/db.sqlite3
+          chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
+          ls -l ${{ github.workspace }}/public_html/db.sqlite3
+
+      - name: List Migration Files
+        run: |
+          ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
+          cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
+
+      - name: Apply Migrations and Log Output
         run: |
           source venv/bin/activate
           python manage.py makemigrations --noinput
@@ -75,8 +87,6 @@ jobs:
           python manage.py showmigrations
           python manage.py showmigrations duttaEcommerceapp
           python manage.py migrate --plan
-          ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
-          cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
 
       - name: Run Custom Management Command
         run: |
