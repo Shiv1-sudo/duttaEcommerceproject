@@ -77,6 +77,11 @@ jobs:
           source venv/bin/activate
           python manage.py collectstatic --noinput
 
+      - name: Run Custom Management Command
+        run: |
+          source venv/bin/activate
+          python manage.py reset_game_data
+
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
         with:
