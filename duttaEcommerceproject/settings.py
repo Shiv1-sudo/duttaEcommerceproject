@@ -144,8 +144,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+'''# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=True, cast=bool)'''
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
@@ -326,8 +326,8 @@ MANAGERS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Reset game data on server start
-django.setup()
-call_command('reset_game_data')
+#django.setup()
+#call_command('reset_game_data')
 
 #new added 
 '''#from email.policy import SMTP
