@@ -81,11 +81,12 @@ jobs:
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
 
-      - name: Collect Static Files
-        run: |
-          source ~/.bashrc
-          conda activate myenv
-          python manage.py collectstatic --noinput
+      # Comment out Collect Static Files
+      # - name: Collect Static Files
+      #   run: |
+      #     source ~/.bashrc
+      #     conda activate myenv
+      #     python manage.py collectstatic --noinput
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
@@ -100,6 +101,6 @@ jobs:
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
             pip install -r requirements.txt
-            python manage.py collectstatic --noinput
+            # python manage.py collectstatic --noinput
             python manage.py migrate
             sudo systemctl restart httpd
