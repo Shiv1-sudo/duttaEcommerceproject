@@ -52,17 +52,19 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
-          sleep 5  # Adding a 5-second delay
+          sleep 10  # Adding a 10-second delay to ensure activation
           if [ $? -ne 0 ]; then
             echo "Failed to activate virtual environment"
             exit 1
           fi
           conda install pip -y
+          sleep 5  # Adding a 5-second delay
           if [ $? -ne 0 ]; then
             echo "Failed to install pip"
             exit 1
           fi
           pip install -r requirements.txt
+          sleep 5  # Adding a 5-second delay
           if [ $? -ne 0 ]; then
             echo "Failed to install dependencies"
             exit 1
@@ -125,17 +127,20 @@ jobs:
             git pull origin updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
+            sleep 10  # Adding a 10-second delay to ensure activation
             current_env=$(conda info --envs | grep '*' | awk '{print $1}')
             if [ "$current_env" != "myenv" ]; then
               echo "Virtual environment not activated"
               exit 1
             fi
             pip install -r requirements.txt
+            sleep 5  # Adding a 5-second delay
             if [ $? -ne 0 ]; then
               echo "Failed to install dependencies on server"
               exit 1
             fi
             python manage.py migrate
+            sleep 5  # Adding a 5-second delay
             if [ $? -ne 0 ]; then
               echo "Failed to run migrations"
               exit 1
