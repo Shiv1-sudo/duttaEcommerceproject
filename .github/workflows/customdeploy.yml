@@ -132,7 +132,6 @@ jobs:
             git pull origin updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
-            sleep 5  # Adding a 5-second delay
             if [ $? -ne 0 ]; then
               echo "Failed to activate virtual environment on server"
               exit 1
