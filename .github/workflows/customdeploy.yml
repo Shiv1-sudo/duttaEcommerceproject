@@ -113,13 +113,6 @@ jobs:
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
           sleep 5  # Adding a 5-second delay
 
-      # Comment out Collect Static Files
-      # - name: Collect Static Files
-      #   run: |
-      #     source $HOME/miniconda3/etc/profile.d/conda.sh
-      #     conda activate myenv
-      #     python manage.py collectstatic --noinput
-
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
         with:
@@ -132,8 +125,9 @@ jobs:
             git pull origin updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
-            if [ $? -ne 0 ]; then
-              echo "Failed to activate virtual environment on server"
+            current_env=$(conda info --envs | grep '*' | awk '{print $1}')
+            if [ "$current_env" != "myenv" ]; then
+              echo "Virtual environment not activated"
               exit 1
             fi
             pip install -r requirements.txt
@@ -141,7 +135,6 @@ jobs:
               echo "Failed to install dependencies on server"
               exit 1
             fi
-            # python manage.py collectstatic --noinput
             python manage.py migrate
             if [ $? -ne 0 ]; then
               echo "Failed to run migrations"
