@@ -30,9 +30,11 @@ jobs:
           eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
           conda init
 
-      - name: Restart shell to pick up Conda initialization
-        shell: bash -l {0}
-        run: echo "Restarting shell"
+      - name: Source Shell Configuration
+        run: |
+          source ~/.bashrc
+          source ~/.bash_profile || true
+          source ~/.profile || true
 
       - name: Create virtual environment
         run: |
