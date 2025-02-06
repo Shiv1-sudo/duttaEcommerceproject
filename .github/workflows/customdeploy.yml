@@ -23,23 +23,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: Create virtual environment
-        run: python -m venv venv
-
-      - name: Ensure distutils is available
+      - name: Set up Conda
         run: |
-          source venv/bin/activate
-          python -m ensurepip --upgrade
-
-      - name: Activate virtual environment and install dependencies
-        run: |
-          source venv/bin/activate
-          python -m pip install --upgrade pip
+          wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+          bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+          echo "source $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+          source ~/.bashrc
+          conda create -n myenv python=3.8 -y
+          conda activate myenv
+          conda install pip -y
           pip install -r requirements.txt
 
       - name: Set Environment Variables
@@ -82,7 +74,8 @@ jobs:
 
       - name: Collect Static Files
         run: |
-          source venv/bin/activate
+          source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
           python manage.py collectstatic --noinput
 
       - name: Deploy to Namecheap Server
@@ -93,9 +86,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 21098
           script: |
-            cd ${{ github.workspace }}/public_html
+            cd /home/duttvnyn/public_html
             git pull origin updated-project
-            source venv/bin/activate
+            source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
+            conda activate myenv
             pip install -r requirements.txt
             python manage.py collectstatic --noinput
-            sudo systemctl restart httpd
+            python manage.py migrate
+            sudo systemctl restart
