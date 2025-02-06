@@ -124,8 +124,6 @@ jobs:
           port: 21098
           script: |
             cd /home/duttvnyn/public_html
-            git remote remove origin || true  # Remove existing remote if it exists
-            git remote add origin https://github.com/Shiv1-sudo/duttaEcommerceproject.git  # Add the remote repository
             git pull origin updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
@@ -147,8 +145,8 @@ jobs:
               echo "Failed to run migrations"
               exit 1
             fi
-            # Using `systemctl` without `sudo` if the user has sufficient privileges
-            systemctl restart httpd
+            # Using `service` instead of `systemctl`
+            service httpd restart
             if [ $? -ne 0 ]; then
               echo "Failed to restart HTTP server"
               exit 1
