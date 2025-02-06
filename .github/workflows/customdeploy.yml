@@ -22,13 +22,23 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7
+        continue-on-error: true
 
       - name: Install Miniconda
         run: |
           wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+          if [ $? -ne 0 ]; then
+            echo "Failed to download Miniconda"
+            exit 1
+          fi
           bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+          if [ $? -ne 0 ]; then
+            echo "Failed to install Miniconda"
+            exit 1
+          fi
           export PATH="$HOME/miniconda3/bin:$PATH"
           conda init
+        continue-on-error: true
 
       - name: Source Shell Configuration
         run: |
@@ -39,9 +49,29 @@ jobs:
       - name: Create virtual environment
         run: |
           conda create -n myenv python=3.8 -y
+          if [ $? -ne 0 ]; then
+            echo "Failed to create virtual environment"
+            exit 1
+          fi
+
+      - name: Activate virtual environment and install pip
+        run: |
+          source ~/.bashrc
           conda activate myenv
+          if [ $? -ne 0 ]; then
+            echo "Failed to activate virtual environment"
+            exit 1
+          fi
           conda install pip -y
+          if [ $? -ne 0 ]; then
+            echo "Failed to install pip"
+            exit 1
+          fi
           pip install -r requirements.txt
+          if [ $? -ne 0 ]; then
+            echo "Failed to install dependencies"
+            exit 1
+          fi
 
       - name: Set Environment Variables
         run: |
@@ -67,12 +97,17 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
+        continue-on-error: true
 
       - name: Verify Database Path and Permissions
         run: |
           echo "Database path: ${{ github.workspace }}/public_html/db.sqlite3"
           ls -l ${{ github.workspace }}/public_html/
           touch ${{ github.workspace }}/public_html/db.sqlite3
+          if [ $? -ne 0 ]; then
+            echo "Failed to touch database file"
+            exit 1
+          fi
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
           ls -l ${{ github.workspace }}/public_html/db.sqlite3
 
@@ -100,7 +135,23 @@ jobs:
             git pull origin updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
+            if [ $? -ne 0 ]; then
+              echo "Failed to activate virtual environment on server"
+              exit 1
+            fi
             pip install -r requirements.txt
+            if [ $? -ne 0 ]; then
+              echo "Failed to install dependencies on server"
+              exit 1
+            fi
             # python manage.py collectstatic --noinput
             python manage.py migrate
+            if [ $? -ne 0 ]; then
+              echo "Failed to run migrations"
+              exit 1
+            fi
             sudo systemctl restart httpd
+            if [ $? -ne 0 ]; then
+              echo "Failed to restart HTTP server"
+              exit 1
+            fi
