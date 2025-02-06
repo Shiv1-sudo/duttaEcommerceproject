@@ -124,7 +124,8 @@ jobs:
           port: 21098
           script: |
             cd /home/duttvnyn/public_html
-            git pull origin updated-project
+            git fetch --all
+            git reset --hard origin/updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
             sleep 10  # Adding a 10-second delay to ensure activation
@@ -145,8 +146,8 @@ jobs:
               echo "Failed to run migrations"
               exit 1
             fi
-            # Using `service` instead of `systemctl`
-            service httpd restart
+            # Ensure the full path to the service command
+            /usr/sbin/service httpd restart
             if [ $? -ne 0 ]; then
               echo "Failed to restart HTTP server"
               exit 1
