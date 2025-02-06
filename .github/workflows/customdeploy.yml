@@ -124,7 +124,10 @@ jobs:
           port: 21098
           script: |
             cd /home/duttvnyn/public_html
-            git pull origin updated-project
+            git init  # Ensure the directory is recognized as a Git repository
+            git remote add origin https://github.com/Shiv1-sudo/duttaEcommerceproject.git  # Add the remote repository
+            git fetch --all
+            git reset --hard origin/updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
             sleep 10  # Adding a 10-second delay to ensure activation
