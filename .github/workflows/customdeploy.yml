@@ -53,8 +53,11 @@ jobs:
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
           sleep 10  # Adding a 10-second delay to ensure activation
-          if [ $? -ne 0 ]; then
-            echo "Failed to activate virtual environment"
+          source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh  # Additional sourcing
+          conda activate myenv  # Additional activation
+          current_env=$(conda info --envs | grep '*' | awk '{print $1}')
+          if [ "$current_env" != "myenv" ]; then
+            echo "Virtual environment not activated"
             exit 1
           fi
           conda install pip -y
@@ -129,6 +132,8 @@ jobs:
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
             sleep 10  # Adding a 10-second delay to ensure activation
+            source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh  # Additional sourcing
+            conda activate myenv  # Additional activation
             current_env=$(conda info --envs | grep '*' | awk '{print $1}')
             if [ "$current_env" != "myenv" ]; then
               echo "Virtual environment not activated"
@@ -146,8 +151,8 @@ jobs:
               echo "Failed to run migrations"
               exit 1
             fi
-            # Ensure the full path to the service command
-            /usr/sbin/service httpd restart
+            # Restart HTTP server using Apache httpd command directly
+            sudo /usr/local/apache2/bin/apachectl restart
             if [ $? -ne 0 ]; then
               echo "Failed to restart HTTP server"
               exit 1
