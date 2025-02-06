@@ -39,8 +39,10 @@ jobs:
 
       - name: Create virtual environment
         run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
           conda create -n myenv python=3.8 -y
           sleep 5  # Adding a 5-second delay
+          conda info --envs  # List all environments to check if myenv is created
           if [ $? -ne 0 ]; then
             echo "Failed to create virtual environment"
             exit 1
