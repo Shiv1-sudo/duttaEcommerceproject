@@ -30,7 +30,7 @@ jobs:
           bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
           export PATH="$HOME/miniconda3/bin:$PATH"
           conda init
-          sleep 5  # Adding a 5-second delay
+          sleep 5
         continue-on-error: true
 
       - name: Apply Conda Initialization
@@ -41,8 +41,8 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda create -n myenv python=3.8 -y
-          sleep 5  # Adding a 5-second delay
-          conda info --envs  # List all environments to check if myenv is created
+          sleep 5
+          conda info --envs
           if [ $? -ne 0 ]; then
             echo "Failed to create virtual environment"
             exit 1
@@ -52,19 +52,16 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
-          sleep 10  # Adding a 10-second delay to ensure activation
+          sleep 10
+          conda info --envs
           if [ $? -ne 0 ]; then
             echo "Failed to activate virtual environment"
             exit 1
           fi
           conda install pip -y
-          sleep 5  # Adding a 5-second delay
-          if [ $? -ne 0 ]; then
-            echo "Failed to install pip"
-            exit 1
-          fi
+          sleep 5
           pip install -r requirements.txt
-          sleep 5  # Adding a 5-second delay
+          sleep 5
           if [ $? -ne 0 ]; then
             echo "Failed to install dependencies"
             exit 1
@@ -107,13 +104,13 @@ jobs:
           fi
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
           ls -l ${{ github.workspace }}/public_html/db.sqlite3
-          sleep 5  # Adding a 5-second delay
+          sleep 5
 
       - name: List Migration Files
         run: |
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
-          sleep 5  # Adding a 5-second delay
+          sleep 5
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
@@ -128,26 +125,18 @@ jobs:
             git reset --hard origin/updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
-            sleep 10  # Adding a 10-second delay to ensure activation
+            sleep 10
             current_env=$(conda info --envs | grep '*' | awk '{print $1}')
             if [ "$current_env" != "myenv" ]; then
               echo "Virtual environment not activated"
               exit 1
             fi
             pip install -r requirements.txt
-            sleep 5  # Adding a 5-second delay
-            if [ $? -ne 0 ]; then
-              echo "Failed to install dependencies on server"
-              exit 1
-            fi
+            sleep 5
             python manage.py migrate
-            sleep 5  # Adding a 5-second delay
-            if [ $? -ne 0 ]; then
-              echo "Failed to run migrations"
-              exit 1
-            fi
-            # Ensure the full path to the service command
-            /usr/sbin/service httpd restart
+            sleep 5
+            # Restart HTTP server using systemctl
+            sudo systemctl restart httpd
             if [ $? -ne 0 ]; then
               echo "Failed to restart HTTP server"
               exit 1
