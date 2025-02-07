@@ -154,27 +154,51 @@ jobs:
             python manage.py migrate
             sleep 5
             echo "Migrations applied."
-            # Restart HTTP server using an alternative method if systemctl, apachectl, and httpd are not available
+
+            # Restart HTTP server using all possible methods
+            echo "Attempting to restart HTTP server using systemctl..."
             if command -v systemctl &> /dev/null; then
               sudo systemctl restart httpd
               if [ $? -ne 0 ]; then
                 echo "Failed to restart HTTP server using systemctl"
-                exit 1
+              else
+                echo "HTTP server restarted using systemctl"
+                exit 0
               fi
-            elif command -v apachectl &> /dev/null; then
+            fi
+
+            echo "Attempting to restart HTTP server using apachectl..."
+            if command -v apachectl &> /dev/null; then
               sudo apachectl restart
               if [ $? -ne 0 ]; then
                 echo "Failed to restart HTTP server using apachectl"
-                exit 1
+              else
+                echo "HTTP server restarted using apachectl"
+                exit 0
               fi
-            elif command -v httpd &> /dev/null; then
+            fi
+
+            echo "Attempting to restart HTTP server using httpd..."
+            if command -v httpd &> /dev/null; then
               sudo httpd restart
               if [ $? -ne 0 ]; then
                 echo "Failed to restart HTTP server using httpd"
-                exit 1
+              else
+                echo "HTTP server restarted using httpd"
+                exit 0
               fi
-            else
-              echo "No suitable command found to restart HTTP server"
-              exit 1
             fi
-            echo "HTTP server restarted."
+
+            echo "Attempting to restart HTTP server using apache2..."
+            if command -v apache2 &> /dev/null; then
+              sudo apache2 restart
+              if [ $? -ne 0 ]; then
+                echo "Failed to restart HTTP server using apache2"
+              else
+                echo "HTTP server restarted using apache2"
+                exit 0
+              fi
+            fi
+
+            echo "No suitable command found to restart HTTP server"
+            exit 1
