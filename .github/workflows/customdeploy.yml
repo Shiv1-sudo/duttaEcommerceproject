@@ -22,7 +22,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7
-        continue-on-error: true
+          # Ensure sudo is installed
+          if ! command -v sudo &> /dev/null; then
+            echo "sudo could not be found"
+            exit 1
+          fi
 
       - name: Install Miniconda
         run: |
@@ -31,11 +35,12 @@ jobs:
           export PATH="$HOME/miniconda3/bin:$PATH"
           conda init
           sleep 5
-        continue-on-error: true
+          echo "Miniconda installed and PATH updated."
 
       - name: Apply Conda Initialization
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
+          echo "Conda initialization applied."
 
       - name: Create virtual environment
         run: |
@@ -47,17 +52,19 @@ jobs:
             echo "Failed to create virtual environment"
             exit 1
           fi
+          echo "Virtual environment created."
 
       - name: Activate virtual environment and install pip
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
           sleep 10
-          conda info --envs
-          if [ $? -ne 0 ]; then
-            echo "Failed to activate virtual environment"
+          current_env=$(conda info --envs | grep '*' | awk '{print $1}')
+          if [ "$current_env" != "myenv" ]; then
+            echo "Virtual environment not activated"
             exit 1
           fi
+          echo "Virtual environment activated: $current_env"
           conda install pip -y
           sleep 5
           pip install -r requirements.txt
@@ -66,6 +73,7 @@ jobs:
             echo "Failed to install dependencies"
             exit 1
           fi
+          echo "Dependencies installed."
 
       - name: Set Environment Variables
         run: |
@@ -86,11 +94,13 @@ jobs:
           echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> $GITHUB_ENV
           echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> $GITHUB_ENV
           echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> $GITHUB_ENV
+          echo "Environment variables set."
 
       - name: Create Database Directory
         run: |
           mkdir -p ${{ github.workspace }}/public_html
           chmod -R 755 ${{ github.workspace }}/public_html
+          echo "Database directory created."
         continue-on-error: true
 
       - name: Verify Database Path and Permissions
@@ -105,12 +115,14 @@ jobs:
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
           ls -l ${{ github.workspace }}/public_html/db.sqlite3
           sleep 5
+          echo "Database path and permissions verified."
 
       - name: List Migration Files
         run: |
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
           sleep 5
+          echo "Migration files listed."
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
@@ -131,13 +143,20 @@ jobs:
               echo "Virtual environment not activated"
               exit 1
             fi
+            echo "Virtual environment activated: $current_env"
             pip install -r requirements.txt
             sleep 5
             python manage.py migrate
             sleep 5
+            echo "Migrations applied."
             # Restart HTTP server using systemctl
+            if ! command -v systemctl &> /dev/null; then
+              echo "systemctl could not be found"
+              exit 1
+            fi
             sudo systemctl restart httpd
             if [ $? -ne 0 ]; then
               echo "Failed to restart HTTP server"
               exit 1
             fi
+            echo "HTTP server restarted."
