@@ -139,8 +139,14 @@ jobs:
             sleep 10
             current_env=$(conda info --envs | grep '*' | awk '{print $1}')
             if [ "$current_env" != "myenv" ]; then
-              echo "Virtual environment not activated"
-              exit 1
+              echo "Virtual environment not activated. Re-activating."
+              source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
+              conda activate myenv
+              current_env=$(conda info --envs | grep '*' | awk '{print $1}')
+              if [ "$current_env" != "myenv" ]; then
+                echo "Failed to re-activate virtual environment"
+                exit 1
+              fi
             fi
             echo "Virtual environment activated: $current_env"
             pip install -r requirements.txt
@@ -148,23 +154,27 @@ jobs:
             python manage.py migrate
             sleep 5
             echo "Migrations applied."
-            # Restart HTTP server using an alternative method if systemctl is not available
-            if ! command -v systemctl &> /dev/null; then
-              echo "systemctl could not be found, attempting to restart using apachectl"
-              if ! command -v apachectl &> /dev/null; then
-                echo "apachectl could not be found"
-                exit 1
-              fi
-              sudo apachectl restart
-              if [ $? -ne 0 ]; then
-                echo "Failed to restart HTTP server using apachectl"
-                exit 1
-              fi
-            else
+            # Restart HTTP server using an alternative method if systemctl, apachectl, and httpd are not available
+            if command -v systemctl &> /dev/null; then
               sudo systemctl restart httpd
               if [ $? -ne 0 ]; then
                 echo "Failed to restart HTTP server using systemctl"
                 exit 1
               fi
+            elif command -v apachectl &> /dev/null; then
+              sudo apachectl restart
+              if [ $? -ne 0 ]; then
+                echo "Failed to restart HTTP server using apachectl"
+                exit 1
+              fi
+            elif command -v httpd &> /dev/null; then
+              sudo httpd restart
+              if [ $? -ne 0 ]; then
+                echo "Failed to restart HTTP server using httpd"
+                exit 1
+              fi
+            else
+              echo "No suitable command found to restart HTTP server"
+              exit 1
             fi
             echo "HTTP server restarted."
