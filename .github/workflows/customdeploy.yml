@@ -18,22 +18,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libopenjp2-7
-          if ! command -v sudo &> /dev/null; then
-            echo "sudo could not be found"
-            exit 1
-          fi
-
       - name: Install Miniconda
         run: |
           wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
           bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
           export PATH="$HOME/miniconda3/bin:$PATH"
           conda init
-          sleep 10
           echo "Miniconda installed and PATH updated."
 
       - name: Apply Conda Initialization
@@ -45,7 +35,6 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda create -n myenv python=3.8 -y
-          sleep 10
           conda info --envs
           if [ $? -ne 0 ]; then
             echo "Failed to create virtual environment"
@@ -57,7 +46,6 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
-          sleep 15
           current_env=$(conda info --envs | grep '*' | awk '{print $1}')
           if [ "$current_env" != "myenv" ]; then
             echo "Virtual environment not activated"
@@ -65,9 +53,7 @@ jobs:
           fi
           echo "Virtual environment activated: $current_env"
           conda install pip -y
-          sleep 10
           pip install -r requirements.txt
-          sleep 10
           if [ $? -ne 0 ]; then
             echo "Failed to install dependencies"
             exit 1
@@ -113,14 +99,12 @@ jobs:
           fi
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
           ls -l ${{ github.workspace }}/public_html/db.sqlite3
-          sleep 10
           echo "Database path and permissions verified."
 
       - name: List Migration Files
         run: |
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
-          sleep 10
           echo "Migration files listed."
 
       - name: Deploy to Namecheap Server
@@ -136,13 +120,11 @@ jobs:
             git reset --hard origin/updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
-            sleep 15
             current_env=$(conda info --envs | grep '*' | awk '{print $1}')
             if [ "$current_env" != "myenv" ]; then
               echo "Virtual environment not activated. Re-activating."
               source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
               conda activate myenv
-              sleep 15
               current_env=$(conda info --envs | grep '*' | awk '{print $1}')
               if [ "$current_env" != "myenv" ]; then
                 echo "Failed to re-activate virtual environment"
@@ -151,76 +133,5 @@ jobs:
             fi
             echo "Virtual environment activated: $current_env"
             pip install -r requirements.txt
-            sleep 10
             python manage.py migrate
-            sleep 10
             echo "Migrations applied."
-
-            # Confirm virtual environment is still activated before proceeding
-            source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
-            conda activate myenv
-            sleep 15
-            current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-            if [ "$current_env" != "myenv" ]; then
-              echo "Virtual environment not activated after migrations. Re-activating."
-              conda activate myenv
-              sleep 15
-              current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-              if [ "$current_env" != "myenv" ]; then
-                echo "Failed to re-activate virtual environment after migrations"
-                exit 1
-              fi
-            fi
-            echo "Virtual environment confirmed: $current_env"
-
-            # Restart HTTP server using all possible methods
-            sleep 10
-            echo "Attempting to restart HTTP server using systemctl..."
-            if command -v systemctl &> /dev/null; then
-              sudo systemctl restart httpd
-              if [ $? -ne 0 ]; then
-                echo "Failed to restart HTTP server using systemctl"
-              else
-                echo "HTTP server restarted using systemctl"
-                exit 0
-              fi
-            fi
-
-            sleep 10
-            echo "Attempting to restart HTTP server using apachectl..."
-            if command -v apachectl &> /dev/null; then
-              sudo apachectl restart
-              if [ $? -ne 0 ]; then
-                echo "Failed to restart HTTP server using apachectl"
-              else
-                echo "HTTP server restarted using apachectl"
-                exit 0
-              fi
-            fi
-
-            sleep 10
-            echo "Attempting to restart HTTP server using httpd..."
-            if command -v httpd &> /dev/null; then
-              sudo httpd restart
-              if [ $? -ne 0 ]; then
-                echo "Failed to restart HTTP server using httpd"
-              else
-                echo "HTTP server restarted using httpd"
-                exit 0
-              fi
-            fi
-
-            sleep 10
-            echo "Attempting to restart HTTP server using apache2..."
-            if command -v apache2 &> /dev/null; then
-              sudo apache2 restart
-              if [ $? -ne 0 ]; then
-                echo "Failed to restart HTTP server using apache2"
-              else
-                echo "HTTP server restarted using apache2"
-                exit 0
-              fi
-            fi
-
-            echo "No suitable command found to restart HTTP server"
-            exit 1
