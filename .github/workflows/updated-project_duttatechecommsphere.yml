@@ -54,4 +54,14 @@ jobs:
           echo "PYTHONPATH=${{ github.workspace }}/public_html" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=duttaEcommerceproject.settings" >> $GITHUB_ENV
           echo "DATABASE_ENGINE=django.db.backends.sqlite3" >> $GITHUB_ENV
-          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db
+          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db.sqlite3" >> $GITHUB_ENV
+          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> $GITHUB_ENV
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
+          echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
+          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> $GITHUB_ENV
+          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> $
