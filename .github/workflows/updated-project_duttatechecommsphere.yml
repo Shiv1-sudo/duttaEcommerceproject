@@ -1,4 +1,4 @@
-name: Build and deploy Python app to Azure Web App - duttaTechEcommSphere
+name: Deploy Django App
 
 on:
   push:
@@ -6,57 +6,121 @@ on:
       - updated-project
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Set up Python version
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.10'
-
-      - name: Create and start virtual environment
+      - name: Install Miniconda
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+          bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+          export PATH="$HOME/miniconda3/bin:$PATH"
+          conda init
+          echo "Miniconda installed and PATH updated."
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Apply Conda Initialization
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          echo "Conda initialization applied."
 
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Create virtual environment
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda create -n myenv python=3.8 -y
+          conda info --envs
+          if [ $? -ne 0 ]; then
+            echo "Failed to create virtual environment"
+            exit 1
+          fi
+          echo "Virtual environment created."
 
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-app
-          path: |
-            release.zip
-            !venv/
+      - name: Activate virtual environment and install pip
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
+          current_env=$(conda info --envs | grep '*' | awk '{print $1}')
+          if [ "$current_env" != "myenv" ]; then
+            echo "Virtual environment not activated"
+            exit 1
+          fi
+          echo "Virtual environment activated: $current_env"
+          conda install pip -y
+          pip install -r requirements.txt
+          if [ $? -ne 0 ]; then
+            echo "Failed to install dependencies"
+            exit 1
+          fi
+          echo "Dependencies installed."
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      - name: Set Environment Variables
+        run: |
+          echo "PYTHONPATH=${{ github.workspace }}/public_html" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=duttaEcommerceproject.settings" >> $GITHUB_ENV
+          echo "DATABASE_ENGINE=django.db.backends.sqlite3" >> $GITHUB_ENV
+          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db.sqlite3" >> $GITHUB_ENV
+          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
+          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> $GITHUB_ENV
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
+          echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
+          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> $GITHUB_ENV
+          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> $GITHUB_ENV
+          echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> $GITHUB_ENV
+          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> $GITHUB_ENV
+          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> $GITHUB_ENV
+          echo "Environment variables set."
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: python-app
+      - name: Create Database Directory
+        run: |
+          mkdir -p ${{ github.workspace }}/public_html
+          chmod -R 755 ${{ github.workspace }}/public_html
+          echo "Database directory created."
+        continue-on-error: true
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+      - name: Verify Database Path and Permissions
+        run: |
+          echo "Database path: ${{ github.workspace }}/public_html/db.sqlite3"
+          ls -l ${{ github.workspace }}/public_html/
+          touch ${{ github.workspace }}/public_html/db.sqlite3
+          if [ $? -ne 0 ]; then
+            echo "Failed to touch database file"
+            exit 1
+          fi
+          chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
+          ls -l ${{ github.workspace }}/public_html/db.sqlite3
+          echo "Database path and permissions verified."
 
-      - name: 'Deploy to Azure Web App'
+      - name: List Migration Files
+        run: |
+          ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
+          cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
+          echo "Migration files listed."
+
+      - name: Run Migrations
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
+          python manage.py migrate
+
+      - name: Collect Static Files
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
+          python manage.py collectstatic --noinput
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
-        id: deploy-to-webapp
         with:
           app-name: 'duttaTechEcommSphere'
           slot-name: 'Production'
