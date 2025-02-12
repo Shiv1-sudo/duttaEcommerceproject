@@ -26,33 +26,22 @@ jobs:
           conda init
           echo "Miniconda installed and PATH updated."
 
-      - name: Apply Conda Initialization
-        run: |
-          source $HOME/miniconda3/etc/profile.d/conda.sh
-          echo "Conda initialization applied."
-
-      - name: Create virtual environment
+      - name: Create and activate virtual environment
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda create -n myenv python=3.8 -y
+          source activate myenv
           conda info --envs
           if [ $? -ne 0 ]; then
-            echo "Failed to create virtual environment"
+            echo "Failed to create or activate virtual environment"
             exit 1
           fi
-          echo "Virtual environment created."
+          echo "Virtual environment created and activated."
 
-      - name: Activate virtual environment and install pip
+      - name: Install dependencies
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
-          conda activate myenv
-          current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-          if [ "$current_env" != "myenv" ]; then
-            echo "Virtual environment not activated"
-            exit 1
-          fi
-          echo "Virtual environment activated: $current_env"
-          conda install pip -y
+          source activate myenv
           pip install -r requirements.txt
           if [ $? -ne 0 ]; then
             echo "Failed to install dependencies"
@@ -65,63 +54,4 @@ jobs:
           echo "PYTHONPATH=${{ github.workspace }}/public_html" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=duttaEcommerceproject.settings" >> $GITHUB_ENV
           echo "DATABASE_ENGINE=django.db.backends.sqlite3" >> $GITHUB_ENV
-          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db.sqlite3" >> $GITHUB_ENV
-          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> $GITHUB_ENV
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> $GITHUB_ENV
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> $GITHUB_ENV
-          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> $GITHUB_ENV
-          echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
-          echo "DEBUG=${{ secrets.DEBUG }}" >> $GITHUB_ENV
-          echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> $GITHUB_ENV
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
-          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> $GITHUB_ENV
-          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> $GITHUB_ENV
-          echo "EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}" >> $GITHUB_ENV
-          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> $GITHUB_ENV
-          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> $GITHUB_ENV
-          echo "Environment variables set."
-
-      - name: Create Database Directory
-        run: |
-          mkdir -p ${{ github.workspace }}/public_html
-          chmod -R 755 ${{ github.workspace }}/public_html
-          echo "Database directory created."
-        continue-on-error: true
-
-      - name: Verify Database Path and Permissions
-        run: |
-          echo "Database path: ${{ github.workspace }}/public_html/db.sqlite3"
-          ls -l ${{ github.workspace }}/public_html/
-          touch ${{ github.workspace }}/public_html/db.sqlite3
-          if [ $? -ne 0 ]; then
-            echo "Failed to touch database file"
-            exit 1
-          fi
-          chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
-          ls -l ${{ github.workspace }}/public_html/db.sqlite3
-          echo "Database path and permissions verified."
-
-      - name: List Migration Files
-        run: |
-          ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
-          cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
-          echo "Migration files listed."
-
-      - name: Run Migrations
-        run: |
-          source $HOME/miniconda3/etc/profile.d/conda.sh
-          conda activate myenv
-          python manage.py migrate
-
-      - name: Collect Static Files
-        run: |
-          source $HOME/miniconda3/etc/profile.d/conda.sh
-          conda activate myenv
-          python manage.py collectstatic --noinput
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'duttaTechEcommSphere'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60A7F3A9487F4A629C671CAFD0BBE381 }}
+          echo "DATABASE_NAME=${{ github.workspace }}/public_html/db
