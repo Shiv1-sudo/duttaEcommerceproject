@@ -46,13 +46,6 @@ jobs:
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda activate myenv
-          current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-          if [ "$current_env" != "myenv" ]; then
-            echo "Virtual environment not activated"
-            exit 1
-          fi
-          echo "Virtual environment activated: $current_env"
-          conda install pip -y
           pip install -r requirements.txt
           if [ $? -ne 0 ]; then
             echo "Failed to install dependencies"
@@ -93,10 +86,6 @@ jobs:
           echo "Database path: ${{ github.workspace }}/public_html/db.sqlite3"
           ls -l ${{ github.workspace }}/public_html/
           touch ${{ github.workspace }}/public_html/db.sqlite3
-          if [ $? -ne 0 ]; then
-            echo "Failed to touch database file"
-            exit 1
-          fi
           chmod 755 ${{ github.workspace }}/public_html/db.sqlite3
           ls -l ${{ github.workspace }}/public_html/db.sqlite3
           echo "Database path and permissions verified."
@@ -106,6 +95,18 @@ jobs:
           ls -l ${{ github.workspace }}/duttaEcommerceapp/migrations/
           cat ${{ github.workspace }}/duttaEcommerceapp/migrations/0010_gameresult.py
           echo "Migration files listed."
+
+      - name: Run Migrations
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
+          python manage.py migrate
+
+      - name: Collect Static Files
+        run: |
+          source $HOME/miniconda3/etc/profile.d/conda.sh
+          conda activate myenv
+          python manage.py collectstatic --noinput
 
       - name: Deploy to Namecheap Server
         uses: appleboy/ssh-action@master
@@ -134,5 +135,5 @@ jobs:
             echo "Virtual environment activated: $current_env"
             pip install -r requirements.txt
             python manage.py migrate
-            echo "Migrations applied."
-      
+            python manage.py collectstatic --noinput
+            echo "Migrations and collectstatic applied."
