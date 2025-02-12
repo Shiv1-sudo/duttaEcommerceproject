@@ -23,34 +23,21 @@ jobs:
           wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
           bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
           export PATH="$HOME/miniconda3/bin:$PATH"
-          conda init
+          conda init bash
           echo "Miniconda installed and PATH updated."
-
-      - name: Apply Conda Initialization
-        run: |
-          source $HOME/miniconda3/etc/profile.d/conda.sh
-          echo "Conda initialization applied."
 
       - name: Create virtual environment
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
           conda create -n myenv python=3.8 -y
-          conda info --envs
-          if [ $? -ne 0 ]; then
-            echo "Failed to create virtual environment"
-            exit 1
-          fi
           echo "Virtual environment created."
 
       - name: Activate virtual environment and install pip
         run: |
           source $HOME/miniconda3/etc/profile.d/conda.sh
+          source activate myenv
           conda activate myenv
           pip install -r requirements.txt
-          if [ $? -ne 0 ]; then
-            echo "Failed to install dependencies"
-            exit 1
-          fi
           echo "Dependencies installed."
 
       - name: Set Environment Variables
@@ -121,18 +108,6 @@ jobs:
             git reset --hard origin/updated-project
             source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
             conda activate myenv
-            current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-            if [ "$current_env" != "myenv" ]; then
-              echo "Virtual environment not activated. Re-activating."
-              source /home/duttvnyn/miniconda3/etc/profile.d/conda.sh
-              conda activate myenv
-              current_env=$(conda info --envs | grep '*' | awk '{print $1}')
-              if [ "$current_env" != "myenv" ]; then
-                echo "Failed to re-activate virtual environment"
-                exit 1
-              fi
-            fi
-            echo "Virtual environment activated: $current_env"
             pip install -r requirements.txt
             python manage.py migrate
             python manage.py collectstatic --noinput
